@@ -21,9 +21,7 @@ pipeline {
     stages {
         stage('Git Checkout') {
             steps {
-                git branch: "${params.branch}", 
-                    credentialsId: 'github-creds', 
-                    url: 'https://github.com/Vickybarai/Netflix-clone.git'
+                git url: 'https://github.com/Vickybarai/Netflix-clone.git'
             }
         }
 
