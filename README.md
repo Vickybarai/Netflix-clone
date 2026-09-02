@@ -196,7 +196,6 @@ tomcat/bin/startup.sh
    * Get the password from the server: `sudo cat /var/lib/jenkins/secrets/initialAdminPassword`
 5. **Install Plugins**: Select **"Install suggested plugins"** and wait for it to finish. (Jenkins will restart automatically).
 
-
 <details>
 <summary>starting issue</summary>
  the Jenkins Weekly release has recently been updated, and **it now strictly requires Java 21 or Java 25**. Your error message is very clear: `Running with Java 17... which is older than the minimum required version (Java 21)`.
