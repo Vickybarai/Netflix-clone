@@ -9,31 +9,27 @@ pipeline {
         DOCKER_IMAGE = 'netflix1'
         DOCKER_REPO = 'baraivicky/netflix-project'
         DOCKER_TAG = 'latest'
-        TARGET_IP = '54.164.59.122' // REPLACE THIS WITH YOUR TOMCAT PRIVATE IP
+        TARGET_IP = '172.31.XX.XX' // REPLACE WITH YOUR TARGET SERVER PRIVATE IP
         TARGET_USER = 'ubuntu'
         CONTAINER_NAME = 'netflix-app'
-    }
-
-    tools {
-        maven 'Maven3' 
     }
 
     stages {
         stage('Git Checkout') {
             steps {
-                git url: 'https://github.com/Vickybarai/Netflix-clone.git'
-            }
-        }
-
-        stage('Build Maven Artifact') {
-            steps {
-                sh 'mvn clean package'
+                git branch: "${params.branch}", 
+                    credentialsId: 'github-creds', 
+                    url: 'https://github.com/Vickybarai/Netflix-clone.git'
+                
+                echo '✅ STAGE COMPLETE: Git Checkout finished successfully.'
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 sh "docker build -t ${DOCKER_IMAGE} ."
+                
+                echo '✅ STAGE COMPLETE: Docker Image built successfully.'
             }
         }
 
@@ -43,6 +39,8 @@ pipeline {
                     sh "docker tag ${DOCKER_IMAGE} ${DOCKER_REPO}:${DOCKER_TAG}"
                     sh "docker push ${DOCKER_REPO}:${DOCKER_TAG}"
                 }
+                
+                echo '✅ STAGE COMPLETE: Image pushed to Docker Hub successfully.'
             }
         }
 
@@ -59,10 +57,12 @@ pipeline {
                         docker pull ${DOCKER_REPO}:${DOCKER_TAG}
                         
                         echo 'Starting new container...'
-                        docker run -d --name ${CONTAINER_NAME} -p 8080:8080 ${DOCKER_REPO}:${DOCKER_TAG}
+                        docker run -d --name ${CONTAINER_NAME} -p 8080:80 ${DOCKER_REPO}:${DOCKER_TAG}
                         EOF
                     """
                 }
+                
+                echo '✅ STAGE COMPLETE: Successfully deployed to the target server!'
             }
         }
     }
@@ -70,6 +70,7 @@ pipeline {
     post {
         always {
             cleanWs()
+            echo '🧹 POST ACTION: Workspace cleaned up.'
         }
     }
 }
