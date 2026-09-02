@@ -354,9 +354,69 @@ The instructor uses Jenkins' **Snippet Generator** to easily write the Tomcat de
    * Click **"Generate Pipeline Script"** and copy the groovy code.
 4. Paste this generated code into a new `stage('Deploy')` block in your `Jenkinsfile`.
 
+
+<details>
+<summary>Still waiting to schedule task; Waiting for next available executor</summary>
+
+ 
+This means your Git checkout worked perfectly, but Jenkins is now trying to start the actual work (Maven build), and **it is frozen waiting for a worker slot.** 
+
+Here is exactly why this happens and how to fix it permanently.
+
+### 🚨 Why is it stuck?
+By default, Jenkins only gives you **2 executor slots** (workers). 
+If you clicked "Build" 3 or 4 times while we were fixing the code errors earlier, those old, broken builds are still sitting in the queue taking up the slots. Your new, fixed build is stuck in line waiting for a slot to open up.
+
+*(Secondary reason: If you are using a free tier `t2.micro` instance with only 1GB of RAM, running Jenkins + Maven + Docker at the same time causes the server to run out of memory and freeze. Jenkins then appears "stuck".)*
+
+---
+
+### 🔧 Step 1: The Quick Fix (Clear the Queue)
+1. Go to your Jenkins Dashboard.
+2. You will see your pipeline name with a number next to it (e.g., `#4`, `#3`, `#2`).
+3. Click on the **older, stuck builds** (like `#2` and `#3`).
+4. On the left side menu, click the red **"Abort"** or **"X"** button.
+5. Do this for all old builds except the newest one (`#4`).
+6. The newest build will instantly say "Building" and continue!
+
+---
+
+### 🛡️ Step 2: The Permanent Fix (Add Swap Space)
+If your build gets stuck *even after* clearing the queue, it means your AWS EC2 instance is running out of RAM (Memory). Maven and Docker are very heavy. 
+
+To fix this on a small AWS instance, we add **Swap Space** (fake RAM using your hard drive). Run these commands on your **Jenkins EC2 terminal**:
+
+```bash
+# Create a 4GB swap file
+sudo fallocate -l 4G /swapfile
+
+# Set correct permissions
+sudo chmod 600 /swapfile
+
+# Format it as swap
+sudo mkswap /swapfile
+
+# Turn it on
+sudo swapon /swapfile
+
+# Make it permanent so it survives reboots
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+```
+
+*(You won't see any output from these commands, that means it worked).*
+
+### ✅ What to do next
+1. Run those swap commands on your Jenkins server.
+2. Go back to Jenkins in your browser.
+3. Abort all stuck builds.
+4. Click **"Build Now"** one single time.
+
+Because you now have 4GB of extra "memory" (swap) and a clear queue, the pipeline will fly through the Maven and Docker stages without getting stuck!
+</details>
+
+
 ### ✨ **Final Step**
 Commit the `Jenkinsfile` to GitHub. Because of the Webhook, Jenkins will automatically detect the change, pull the code, run Maven to build the `.war` file, and deploy it directly to your Tomcat server! You can then view your Netflix clone running at `http://<Tomcat-Public-IP>:8080/netflix`.
-
 ## Screenshots
 
 ### Parameterized Pipeline
