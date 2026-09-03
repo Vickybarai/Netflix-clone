@@ -51,7 +51,7 @@ pipeline {
             steps {
                 sshagent(['ssh-target-creds']) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no ${TARGET_USER}@${TARGET_IP} << 'EOF'
+                        ssh -o StrictHostKeyChecking=no ${TARGET_USER}@${TARGET_IP} << EOF
                         echo 'Step 1: Stopping specific container named netflix-app...'
                         docker stop ${CONTAINER_NAME} || true
                         docker rm ${CONTAINER_NAME} || true
