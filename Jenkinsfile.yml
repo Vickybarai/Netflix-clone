@@ -51,7 +51,6 @@ pipeline {
             steps {
                 sshagent(['ssh-target-creds']) {
                     sh """
-                        // ADDED FLAG: -o StrictHostKeyChecking=no
                         ssh -o StrictHostKeyChecking=no ${TARGET_USER}@${TARGET_IP} << 'EOF'
                         echo 'Stopping old container...'
                         docker stop ${CONTAINER_NAME} || true
