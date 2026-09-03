@@ -15,7 +15,7 @@ This project demonstrates a modern CI/CD pipeline that automates the build, test
 
 *(Note: We use two separate AWS EC2 instances to decouple the Jenkins server from the production environment and to avoid port conflicts.)*
 <details>
-<summary>**Headline: 🚀 Successfully Automated a Full CI/CD Pipeline for a Netflix Clone Application using Jenkins, Docker, and AWS!**
+<summary>🚀 Successfully Automated a Full CI/CD Pipeline for a Netflix Clone Application using Jenkins, Docker, and AWS!**
 </summary>
 
 I’m excited to share a comprehensive DevOps project I recently completed. I designed and implemented an end-to-end CI/CD pipeline to automate the build, test, and deployment of a Java-based Netflix Clone application.
@@ -56,10 +56,10 @@ I’m looking forward to applying these skills to more complex microservices arc
 ## Screenshots
 
 ### Parameterized Pipeline
-![Parameterized Pipeline](images/parameter.png)
+![Parameterized Pipeline](images/parameter.jpeg)
 
 ### Jenkins Stage View
-![Jenkins Stage View](images/pipeline_stage_view.png)
+![Jenkins Stage View](images/pipeline_stage_view.jpeg)
 
 ### Docker Hub Integration
 ![Docker Hub Integration](images/dockerhub.png)
