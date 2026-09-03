@@ -51,23 +51,24 @@ pipeline {
             steps {
                 sshagent(['ssh-target-creds']) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no ${TARGET_USER}@${TARGET_IP} << EOF
+                        ssh -o StrictHostKeyChecking=no ${TARGET_USER}@${TARGET_IP} << 'EOF'
                         echo 'Step 1: Stopping specific container named netflix-app...'
                         docker stop ${CONTAINER_NAME} || true
                         docker rm ${CONTAINER_NAME} || true
 
                         echo 'Step 2: Killing ANY process or container on port 8080 (Force cleanup)...'
-                        # Stop any docker container exposing 8080
                         docker ps -q -f "publish=8080" | xargs -r docker stop -t 0
-                        # Remove any docker container (even stopped ones) exposing 8080
                         docker ps -a -q -f "publish=8080" | xargs -r docker rm -f
-                        
+
                         echo 'Step 3: Pulling new image...'
                         docker pull ${DOCKER_REPO}:${DOCKER_TAG}
-                        
+
                         echo 'Step 4: Starting new container...'
                         docker run -d --name ${CONTAINER_NAME} -p 8080:8080 ${DOCKER_REPO}:${DOCKER_TAG}
-                        EOF
+
+                        echo 'Step 5: Checking application logs (last 10 lines)...'
+                        docker logs ${CONTAINER_NAME} --tail 10
+EOF
                     """
                 }
                 echo '✅ STAGE COMPLETE: Successfully deployed to the target server!'
