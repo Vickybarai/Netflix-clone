@@ -260,7 +260,9 @@ sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 ### 🛠️ Install docker in both 
 <details>
 <summary>docker installation</summary>
+
 ```bash
+
 sudo apt-get update
 sudo apt-get install ca-certificates curl
 sudo install -m 0755 -d /etc/apt/keyrings
@@ -273,10 +275,13 @@ echo \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt-get update
 ```
-
 ```bash
+
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
 ```
+
+
 </details>
 ### After install
 sudo apt install docker.io -y
@@ -289,7 +294,8 @@ Log in to Jenkins and set up the tools and connections:
 1. **Configure Maven**:
    * Go to **Manage Jenkins** -> **Tools** -> Scroll to **Maven installations**.
    * Click "Add Maven", name it `Maven3`, select "Install automatically", and choose the latest version. Save it.
-2. **Add Credentials** (Go to Manage Jenkins -> Credentials -> System -> Global credentials -> Add Credentials):
+
+2. no need ===**Add Credentials** (Go to Manage Jenkins -> Credentials -> System -> Global credentials -> Add Credentials):
    * **GitHub Credential**: 
      * Kind: Username with password
      * Username: Your GitHub username

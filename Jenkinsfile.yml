@@ -9,7 +9,7 @@ pipeline {
         DOCKER_IMAGE = 'netflix1'
         DOCKER_REPO = 'baraivicky/netflix-project'
         DOCKER_TAG = 'latest'
-        TARGET_IP = '54.226.94.213' // REPLACE WITH YOUR TARGET SERVER PRIVATE IP
+        TARGET_IP = '3.238.79.115' // REPLACE WITH YOUR TARGET SERVER PRIVATE IP
         TARGET_USER = 'ubuntu'
         CONTAINER_NAME = 'netflix-app'
     }
