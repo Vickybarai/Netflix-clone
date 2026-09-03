@@ -55,7 +55,7 @@ pipeline {
                 // Now that you installed the SSH Agent plugin, this will work!
                 sshagent(['ssh-target-creds']) {
                     sh """
-                        ssh ${TARGET_USER}@${TARGET_IP} << 'EOF'
+                        ssh -T ${TARGET_USER}@${TARGET_IP} << 'EOF'
                         echo 'Stopping old container...'
                         docker stop ${CONTAINER_NAME} || true
                         docker rm ${CONTAINER_NAME} || true
