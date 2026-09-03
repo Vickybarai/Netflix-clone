@@ -52,9 +52,11 @@ pipeline {
                 sshagent(['ssh-target-creds']) {
                     sh """
                         ssh -o StrictHostKeyChecking=no ${TARGET_USER}@${TARGET_IP} << 'EOF'
-                        echo 'Stopping old container...'
-                        docker stop ${CONTAINER_NAME} || true
-                        docker rm ${CONTAINER_NAME} || true
+                        
+                        # FORCE STOP: Stop ANY container listening on port 8080 (regardless of name)
+                        echo 'Forcing stop of any process on port 8080...'
+                        docker ps -a -q -f "publish=8080" | xargs -r docker stop -t 0
+                        docker ps -a -q -f "publish=8080" | xargs -r docker rm -f
                         
                         echo 'Pulling new image...'
                         docker pull ${DOCKER_REPO}:${DOCKER_TAG}
