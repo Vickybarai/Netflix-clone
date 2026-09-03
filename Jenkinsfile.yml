@@ -25,6 +25,20 @@ pipeline {
             }
         }
 
+        stage('Build Maven Artifact') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+
+        // ADD THIS DEBUG STAGE TEMPORARILY
+        stage('Debug - Check Target Folder') {
+            steps {
+                sh 'ls -ltr target/'
+            }
+        }
+
+
         stage('Build Docker Image') {
             steps {
                 sh "docker build -t ${DOCKER_IMAGE} ."
