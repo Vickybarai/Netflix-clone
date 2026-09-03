@@ -25,31 +25,15 @@ pipeline {
             }
         }
 
-        stage('Build Maven Artifact') {
-            steps {
-                sh 'mvn clean package'
-            }
-        }
-
-        // ADD THIS DEBUG STAGE TEMPORARILY
-        stage('Debug - Check Target Folder') {
-            steps {
-                sh 'ls -ltr target/'
-            }
-        }
-
-
         stage('Build Docker Image') {
             steps {
                 sh "docker build -t ${DOCKER_IMAGE} ."
-                
                 echo '✅ STAGE COMPLETE: Docker Image built successfully.'
             }
         }
 
-                stage('Push to Docker Hub') {
+        stage('Push to Docker Hub') {
             steps {
-                // Use 'withCredentials' to securely inject username and password
                 withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh """
                         echo "Logging in to Docker Hub..."
@@ -62,13 +46,13 @@ pipeline {
                         docker push ${DOCKER_REPO}:${DOCKER_TAG}
                     """
                 }
-            echo '✅ STAGE COMPLETE: Docker Image pushed to Docker Hub successfully.'
-            
+                echo '✅ STAGE COMPLETE: Docker Image pushed to Docker Hub successfully.'
             }
         }
 
         stage('Deploy to Target Server via SSH') {
             steps {
+                // Now that you installed the SSH Agent plugin, this will work!
                 sshagent(['ssh-target-creds']) {
                     sh """
                         ssh ${TARGET_USER}@${TARGET_IP} << 'EOF'
@@ -80,11 +64,10 @@ pipeline {
                         docker pull ${DOCKER_REPO}:${DOCKER_TAG}
                         
                         echo 'Starting new container...'
-                        docker run -d --name ${CONTAINER_NAME} -p 8080:80 ${DOCKER_REPO}:${DOCKER_TAG}
+                        docker run -d --name ${CONTAINER_NAME} -p 8080:8080 ${DOCKER_REPO}:${DOCKER_TAG}
                         EOF
                     """
                 }
-                
                 echo '✅ STAGE COMPLETE: Successfully deployed to the target server!'
             }
         }
